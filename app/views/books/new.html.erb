@@ -1,0 +1,7 @@
+<main>
+  <h1><%= link_to 'All books', books_path %></h1>
+
+  <turbo-frame id="new-book">
+    <%= render partial: "books/shared/form", locals: { book: local_assigns[:book], authors: local_assigns[:authors], book_shelves: local_assigns[:book_shelves] } %>
+  </turbo-frame>
+</main>

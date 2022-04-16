@@ -1,0 +1,21 @@
+<%= form_with model: book do |form| %>
+  <p>
+    <b>Title</b><br>
+    <%= form.text_field :title %>
+  </p>
+  <p>
+    <b>Author</b><br>
+    <%= form.select :author_id, authors %>
+  </p>
+  <p>
+    <b>Image</b><br>
+    <%= form.file_field :cover %>
+  </p>
+  <p>
+    <b>Shelf</b><br>
+    <%= form.select :shelf, book_shelves %>
+  </p>
+  <p>
+    <%= form.submit 'Add book' %>
+  </p>
+<% end %>
