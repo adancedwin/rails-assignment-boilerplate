@@ -1,0 +1,5 @@
+<div id="author">
+  <b>Author</b><br>
+  <%= select_tag 'book[author][id]', options_for_select(authors) %><br>
+  <%= link_to 'Add author', book_add_author_path %>
+</div>

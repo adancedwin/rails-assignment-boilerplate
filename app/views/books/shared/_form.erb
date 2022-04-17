@@ -1,11 +1,12 @@
-<%= form_with model: book do |form| %>
+<%= form_with(model: book, local: true) do |form| %>
+  <div id="errors"></div>
+
   <p>
     <b>Title</b><br>
     <%= form.text_field :title %>
   </p>
   <p>
-    <b>Author</b><br>
-    <%= form.select :author_id, authors %>
+    <%= render partial: "books/shared/select_author", locals: { authors: authors } %>
   </p>
   <p>
     <b>Image</b><br>

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class BooksController < ApplicationController
+  include Helpers::BookHelper
+
   has_scope :by_shelf, as: :shelf
 
   def index
@@ -18,19 +20,28 @@ class BooksController < ApplicationController
   end
 
   def create
-    result = Services::Books::Creator.new.call(book_params)
-    if result
-      # flash[:notice] = t('messages.created', resource_name: resource_fund.model_name.human)
-      # redirect_to fund_url(resource_fund)
-      redirect_to books_path
+    result = Services::Books::Creator.new.call(book_params.to_h)
+    if result.success?
+      redirect_to books_path, status: 303
     else
-      # flash.now[:error] = t('messages.errors')
-      # render action: :new, locals: {
-      #   reviewers_collection: reviewers_collection,
-      #   preparers_collection: preparers_collection,
-      #   team_leaders_collection: team_leaders_collection
-      # }
+      render turbo_stream: turbo_stream.replace(
+        'errors',
+        partial: 'books/shared/errors',
+        locals: { errors: result.errors }
+      )
     end
+  end
+
+  def add_author
+    render turbo_stream: turbo_stream.replace('author', partial: 'books/shared/add_author')
+  end
+
+  def select_author
+    render turbo_stream: turbo_stream.replace(
+      'author',
+      partial: 'books/shared/select_author',
+      locals: { authors: authors_for_select }
+    )
   end
 
   private
@@ -44,6 +55,7 @@ class BooksController < ApplicationController
   end
 
   def book_params
-    params.fetch(:book, {}).permit(:title, :author_id, :cover, :shelf)
+    params.fetch(:book, {})
+          .permit(:title, :cover, :shelf, author: %i[id name])
   end
 end

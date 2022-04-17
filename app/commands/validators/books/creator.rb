@@ -5,13 +5,20 @@ module Validators
     class Creator < Base
       params do
         required(:title).filled(:str?)
-        required(:author_id)
+        required(:author).hash do
+          optional(:id).maybe(:str?)
+          optional(:name).maybe(:str?)
+        end
         required(:shelf).filled(:str?)
-        required(:cover).filled(:str?)
+        required(:cover)
       end
 
-      rule(:author_id) do
-        key.failure('not found') unless Author.exists?(value)
+      rule(:author) do
+        if value[:id]
+          key.failure('not found') unless Author.exists?(value[:id])
+        elsif value[:name].empty?
+          key.failure('needs to be present')
+        end
       end
 
       rule(:shelf) do
@@ -19,7 +26,7 @@ module Validators
       end
 
       rule(:cover) do
-        key.failure('not found') unless value.content_type.in?(%w[image/jpeg image/png])
+        key.failure('can be either .jpeg or .png') unless value.content_type.in?(%w[image/jpeg image/png])
       end
     end
   end
